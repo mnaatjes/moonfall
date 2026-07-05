@@ -13,6 +13,13 @@ A **Geodetic Coordinate** represents a unique location on the surface of the lun
 *   **Longitude (East-West):** Specifies the angle east of the Prime Meridian.
     *   Ranges from **$0.0^{\circ}$ to $360.0^{\circ}$**, measured continuously in the Eastern direction (following planetary cartography conventions).
 
+### Simulation Integration
+The Geodetic Coordinate system is the **foundational coordinate reference** for the simulation, not just a visual overlay:
+
+*   **Database Mapping:** Heightmap datasets (NASA LOLA DEM) and resource maps are stored and indexed by Latitude and Longitude.
+*   **Gameplay Math:** Launch vehicle trajectories, satellite orbits, and ground locations are calculated using geodetic math.
+*   **Unity Conversion:** When displaying the Moon in Unity, a mathematical projection converts these geodetic coordinates into 3D Cartesian coordinates (`Vector3` vectors) to render the 3D lunar sphere.
+
 ---
 
 ## 2. Elevation, Altitude, and the Mean Radius Baseline
