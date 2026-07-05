@@ -48,24 +48,17 @@ This sequence outlines the check and load execution flow during the game update 
 
 ```mermaid
 sequenceDiagram
-    participant Loop as Unity Update Loop
-    participant TSS as TerrainStreamingService
-    participant QTNode as LunarQuadtreeNode
+    participant Loop as Unity Loop
+    participant TSS as Terrain Service
+    participant Node as Quadtree Node
     participant Disk as Storage Disk
 
-    Loop->>TSS: "EvaluateLoadRequirements(camLookAt, camAltitude)"
-    TSS->>QTNode: "Distance Check (Camera to Node Center)"
-    opt When Node needs subdivision (Zoomed In)
-        TSS->>QTNode: "Subdivide into four children"
-    end
-    opt When Node is Leaf and within range
-        TSS->>TSS: "LoadSectorData(Node)"
-        TSS->>Disk: "Async Read Heightmap and Resource Maps"
-        Disk-->>TSS: "Return raw float arrays"
-        TSS->>QTNode: "Instantiate and link SectorData"
-    end
-    opt When Node is out of range
-        TSS->>TSS: "UnloadSectorData(Node)"
-        TSS->>QTNode: "Clear SectorData reference (Garbage Collect)"
-    end
+    Loop->>TSS: EvaluateLoadRequirements
+    TSS->>Node: DistanceCheck
+    TSS->>TSS: LoadSectorData
+    TSS->>Disk: AsyncRead
+    Disk-->>TSS: ReturnData
+    TSS->>Node: LinkSector
+    TSS->>TSS: UnloadSectorData
+    TSS->>Node: ClearSector
 ```
