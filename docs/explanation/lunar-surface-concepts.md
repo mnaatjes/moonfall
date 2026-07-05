@@ -94,3 +94,7 @@ Here is how position, size, and collision boundaries are represented in the Mode
 ### C. The Role of the CubeSphere
 If the game-world is modeled as a sphere, the CubeSphere is utilized for the following:
 *   The CubeSphere is used as a database index and streaming system. It is a way to divide the spherical Moon into a quadtree grid so the game knows which sectors to load/unload from the hard drive as the camera moves, avoiding the math errors that happen when using lat/lon grids at the poles.
+
+---
+
+## 6. Game-World Coordinate Hierarchy
