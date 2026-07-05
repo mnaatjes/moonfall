@@ -72,6 +72,16 @@ To visualize how the flat cube becomes a round sphere, let's look at the mathema
 *   **Distance to Face Centers:** The distance from the center to the middle of any face is exactly $1.0\text{ unit}$.
 *   If this cube is placed inside a sphere of radius $\sqrt{3}$, only the corners touch the sphere.
 
+In a standard cubed-sphere projection where the cube is inscribed inside the sphere, the 8 corners of the cube touch the sphere's surface exactly. Therefore, the radius $R$ is simply equal to the distance from the center to the corners ($d_{\text{corner}}$):
+$$R = d_{\text{corner}}$$
+
+#### Solving for $R$:
+1.  **Identify the Corner Coordinate:** The corner coordinate is $(1,1,1)$.
+2.  **Calculate the Distance ($d_{\text{corner}}$):** Use the 3D Pythagorean theorem:
+$$d_{\text{corner}} = \sqrt{1^2 + 1^2 + 1^2} = \sqrt{3} \approx 1.732\text{ units}$$
+3.  **Result:** The radius of the sphere is:
+$$R = \sqrt{3} \approx 1.732\text{ units}$$
+
 ### C. Purpose of Finding "Distance to Face Centers"
 Understanding the distance from the center to the face centers serves a key purpose in the projection math:
 *   **Measuring Topographical Variance:** It highlights that the cube's flat surface varies in distance from the center (from $1.0$ at the face center to $1.732$ at the corners).
@@ -101,8 +111,11 @@ This section defines the mathematical symbols and equations used to project a fl
 ### B. Equations
 
 #### 1. Deriving the Scale Factor ($s$)
-The scale factor for any point is the ratio of the target sphere radius to the point's current distance from the center:
+For any point $\vec{p}$ on the cube surface, we have all necessary values to calculate its unique scale factor $s$:
 $$s = \frac{R}{d} = \frac{R}{\|\vec{p}\|}$$
+
+*   **Is it a fixed value? No, it changes dynamically:** The scale factor is unique for almost every point on the cube's face.
+*   **Why it changes:** As you move from the center of a face toward a corner, the point's distance to the center ($d = \|\vec{p}\|$) increases. Since $d$ changes, the ratio $s = \frac{R}{d}$ must also change.
 
 #### 2. Projecting to the Sphere Surface ($\vec{p}_{\text{sphere}}$)
 Multiplying the original flat coordinate vector by the scale factor yields its position on the sphere:

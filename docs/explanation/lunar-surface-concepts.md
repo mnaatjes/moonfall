@@ -74,3 +74,23 @@ While both systems represent points on a spherical Moon, they solve different ma
 | **Polar Behavior** | Longitude lines converge at the North and South poles (singularities). | The poles are treated like ordinary surface points on the cube faces. |
 | **Cell Distortion** | High distortion; cells stretch into narrow triangles near the poles. | Low distortion; cells remain relatively square across the entire surface. |
 | **Primary Use** | Standardized human navigation and GIS coordinate references. | Game engine rendering, physics simulation, and real-time terrain level-of-detail (LOD) calculations. |
+
+---
+
+## 5. Game-World Simulation Modeling and Coordinates
+
+The game-world is modeled as a spherical globe divided into geographic coordinate quadrangles (Sectors). 
+
+Here is how position, size, and collision boundaries are represented in the Model:
+
+### A. Position Representation
+*   **Inside a Sector (Local Play):** Position is represented using Local Metric Offsets (meters $(x,z)$ from the southwest corner of the loaded Sector).
+*   **Global (Launch/Orbit):** Position is represented using Geodetic Coordinates (Latitude, Longitude) on the spherical globe.
+
+### B. Size and Collision Boundaries
+*   **Local Level:** Collision bounds and building sizes are represented in meters (e.g., a $20\text{ m} \times 20\text{ m}$ collision box).
+*   **Why this works:** When a Sector is loaded, it is treated as a flat, local metric plane. This allows standard Unity physics and collision logic to work seamlessly in meters without dealing with complex spherical curves during active play.
+
+### C. The Role of the CubeSphere
+If the game-world is modeled as a sphere, the CubeSphere is utilized for the following:
+*   The CubeSphere is used as a database index and streaming system. It is a way to divide the spherical Moon into a quadtree grid so the game knows which sectors to load/unload from the hard drive as the camera moves, avoiding the math errors that happen when using lat/lon grids at the poles.
