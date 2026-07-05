@@ -55,14 +55,14 @@ sequenceDiagram
 
     Loop->>TSS: EvaluateLoadRequirements(camLookAt, camAltitude)
     TSS->>Node: Distance Check (Camera to Node Center)
-    alt Node needs subdivision (Zoomed In)
+    alt [Node needs subdivision (Zoomed In)]
         TSS->>Node: Subdivide into 4 Children
-    else Node is Leaf and within range
+    else [Node is Leaf and within range]
         TSS->>TSS: LoadSectorData(Node)
         TSS->>Disk: Async Read Heightmap/Resource Maps
         Disk-->>TSS: return raw float arrays
         TSS->>Node: Instantiate and link SectorData
-    else Node is out of range
+    else [Node is out of range]
         TSS->>TSS: UnloadSectorData(Node)
         TSS->>Node: Clear SectorData reference (Garbage Collect)
     end
