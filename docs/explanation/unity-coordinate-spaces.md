@@ -60,3 +60,21 @@ To clarify how the virtual volume relates to what is rendered on screen, it is n
 ### C. Is the Scene equivalent to Unity's Global Virtual Space?
 *   **Yes:** While a scene is active, it defines the active Global Virtual Space. The origin $(0,0,0)$ is the center of this active scene container.
 *   **Note:** You can think of a Scene as a virtual room. The World Origin is the exact center of that room, and the Camera is a person walking around the room holding a video camera. What is shown on the screen is only what the camera person points at, not the entire room.
+
+---
+
+## 5. View Optimization and Culling Systems
+
+To maintain game performance, Unity and the developers use several culling systems to manage which assets in the active Scene are rendered at any given time:
+
+### A. Frustum Culling
+*   **Definition:** The automatic process of discarding rendering calculations for objects that lie outside the camera's field of view (the view frustum).
+*   **Developer Participation:** **Automatic.** This is handled inherently by Unity's rendering pipeline; no developer configuration is required.
+
+### B. Level of Detail (LOD) and LOD Group Components
+*   **Definition:** Swapping complex 3D models with simplified, lower-polygon versions (or hiding them entirely) as the camera moves further away.
+*   **Developer Participation:** **Explicitly Configured.** Developers must attach and configure `LOD Group` components on game assets to define the distance thresholds and models used at varying camera distances.
+
+### C. Occlusion Culling
+*   **Definition:** Hides objects that are technically inside the camera's view frustum but are completely blocked from view by other solid geometry (such as terrain or buildings).
+*   **Developer Participation:** **Explicitly Configured.** Developers must designate static geometry as occluders and bake occlusion data maps within the Unity Editor.
