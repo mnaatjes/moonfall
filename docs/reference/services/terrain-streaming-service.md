@@ -50,15 +50,15 @@ This sequence outlines the check and load execution flow during the game update 
 sequenceDiagram
     participant Loop as UnityLoop
     participant TSS as TerrainService
-    participant Node as QuadtreeNode
+    participant QTNode as QuadtreeNode
     participant Disk as StorageDisk
 
     Loop->>TSS: EvaluateLoadRequirements
-    TSS->>Node: DistanceCheck
+    TSS->>QTNode: DistanceCheck
     TSS->>TSS: LoadSectorData
     TSS->>Disk: AsyncRead
     Disk-->>TSS: ReturnData
-    TSS->>Node: LinkSector
+    TSS->>QTNode: LinkSector
     TSS->>TSS: UnloadSectorData
-    TSS->>Node: ClearSector
+    TSS->>QTNode: ClearSector
 ```
