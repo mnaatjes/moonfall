@@ -98,3 +98,15 @@ If the game-world is modeled as a sphere, the CubeSphere is utilized for the fol
 ---
 
 ## 6. Game-World Coordinate Hierarchy
+
+### A. Local Metric Coordinate (`LocalOffset`)
+*   **Scale:** Micro Scale (Inside a single playable Sector).
+*   **Definition:** A flat, 2D coordinate $(x,z)$ measured in meters from a Sector's designated origin point (the southwest corner, which represents $(0,0)$).
+*   **Example:** Placing a Solar Panel at local position $(x = 45.0\text{ m}, z = 120.5\text{ m})$ relative to the bottom-left corner of Sector `SEC-402`.
+
+### B. Global Geodetic Coordinate (`GeoCoordinate`)
+*   **Scale:** Macro Scale (The entire lunar globe).
+*   **Definition:** An angular coordinate pair (Latitude, Longitude) in degrees representing a physical point on the spherical Moon.
+*   **Example:** The Shackleton Crater (a key resource site at the South Pole) is located at:
+    *   `Latitude = -89.9°`
+    *   `Longitude = 0.0°`
