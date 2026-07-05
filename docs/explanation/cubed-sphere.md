@@ -63,3 +63,32 @@ To turn the flat cube into a perfect sphere, we must project all points on the c
 *   We draw a straight line (a vector) from the center of the sphere, through a point on the flat cube face, and extend it until it hits the sphere's surface.
 *   This normalizes the distance of every point to be exactly equal to the sphere's radius ($R$).
 *   The centers of the faces (originally at distance $1.0$) are pushed outward by the greatest amount, while the corners (already at the sphere's boundary) are not pushed outward at all. This "inflates" the flat faces into curved surfaces.
+
+---
+
+## 4. Mathematical Representations and Equations
+
+This section defines the mathematical symbols and equations used to project a flat cube coordinate onto a sphere of radius $R$.
+
+### A. Variable Reference
+*   **$\vec{p} = (x, y, z)$:** The 3D position vector of a point on the flat surface of the cube.
+*   **$d = \|\vec{p}\| = \sqrt{x^2 + y^2 + z^2}$:** The Euclidean distance from the center $(0,0,0)$ to the point $\vec{p}$.
+*   **$d_{\text{face}}$:** The Distance-to-Face-Centers ($d_{\text{face}} = 1.0\text{ unit}$ on a unit cube).
+*   **$d_{\text{corner}}$:** The Distance-to-Corners ($d_{\text{corner}} = \sqrt{3} \approx 1.732\text{ units}$ on a unit cube).
+*   **$R$:** The physical radius of the target sphere (e.g., $1737.4\text{ km}$ for the Moon).
+*   **$s$:** The local Scale Factor (stretch factor) calculated for point $\vec{p}$.
+*   **$\vec{p}_{\text{sphere}}$:** The final 3D coordinate vector of the projected point on the sphere surface.
+
+### B. Equations
+
+#### 1. Deriving the Scale Factor ($s$)
+The scale factor for any point is the ratio of the target sphere radius to the point's current distance from the center:
+$$s = \frac{R}{d} = \frac{R}{\|\vec{p}\|}$$
+
+#### 2. Projecting to the Sphere Surface ($\vec{p}_{\text{sphere}}$)
+Multiplying the original flat coordinate vector by the scale factor yields its position on the sphere:
+$$\vec{p}_{\text{sphere}} = s \cdot \vec{p} = \left(\frac{R}{\|\vec{p}\|}\right) \cdot \vec{p}$$
+
+#### 3. Range of Stretch
+*   **Maximum Scale (At Face Center):** $s_{\text{max}} = \frac{R}{d_{\text{face}}} = R$
+*   **Minimum Scale (At Corner):** $s_{\text{min}} = \frac{R}{d_{\text{corner}}} = \frac{R}{\sqrt{3}} \approx 0.577 \cdot R$
