@@ -21,23 +21,23 @@ The `TerrainStreamingService` handles level-of-detail (LOD) database loading and
 
 ```mermaid
 classDiagram
-    class TerrainStreamingService {
-        +EvaluateLoadRequirements(GeoCoordinate cameraLookAt, float cameraAltitude) void
-        -LoadSectorData(LunarQuadtreeNode leafNode) void
-        -UnloadSectorData(LunarQuadtreeNode leafNode) void
-    }
-    class LunarQuadtreeNode {
-        +int Depth
-        +GeoCoordinate Center
-        +Sector SectorData
-        +LunarQuadtreeNode[] Children
-    }
-    class Sector {
-        +string SectorId
-        +bool IsLoaded
-    }
-    TerrainStreamingService --> LunarQuadtreeNode : Traverses and Modifies
-    LunarQuadtreeNode --> Sector : Holds
+class TerrainStreamingService {
+    +EvaluateLoadRequirements(GeoCoordinate cameraLookAt, float cameraAltitude) void
+    -LoadSectorData(LunarQuadtreeNode leafNode) void
+    -UnloadSectorData(LunarQuadtreeNode leafNode) void
+}
+class LunarQuadtreeNode {
+    +int Depth
+    +GeoCoordinate Center
+    +Sector SectorData
+    +LunarQuadtreeNode[] Children
+}
+class Sector {
+    +string SectorId
+    +bool IsLoaded
+}
+TerrainStreamingService --> LunarQuadtreeNode : Traverses and Modifies
+LunarQuadtreeNode --> Sector : Holds
 ```
 
 ---
@@ -48,17 +48,17 @@ This sequence outlines the check and load execution flow during the game update 
 
 ```mermaid
 sequenceDiagram
-    participant Loop as UnityLoop
-    participant TSS as TerrainService
-    participant QTNode as QuadtreeNode
-    participant Disk as StorageDisk
+participant UpdateLoop as UpdateLoop
+participant TSS as TerrainService
+participant QTNode as QuadtreeNode
+participant Disk as StorageDisk
 
-    Loop->>TSS: EvaluateLoadRequirements
-    TSS->>QTNode: DistanceCheck
-    TSS->>TSS: LoadSectorData
-    TSS->>Disk: AsyncRead
-    Disk-->>TSS: ReturnData
-    TSS->>QTNode: LinkSector
-    TSS->>TSS: UnloadSectorData
-    TSS->>QTNode: ClearSector
+UpdateLoop->>TSS: EvaluateLoadRequirements
+TSS->>QTNode: DistanceCheck
+TSS->>TSS: LoadSectorData
+TSS->>Disk: AsyncRead
+Disk-->>TSS: ReturnData
+TSS->>QTNode: LinkSector
+TSS->>TSS: UnloadSectorData
+TSS->>QTNode: ClearSector
 ```
