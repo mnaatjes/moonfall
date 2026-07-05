@@ -111,3 +111,16 @@ $$\vec{p}_{\text{sphere}} = s \cdot \vec{p} = \left(\frac{R}{\|\vec{p}\|}\right)
 #### 3. Range of Stretch
 *   **Maximum Scale (At Face Center):** $s_{\text{max}} = \frac{R}{d_{\text{face}}} = R$
 *   **Minimum Scale (At Corner):** $s_{\text{min}} = \frac{R}{d_{\text{corner}}} = \frac{R}{\sqrt{3}} \approx 0.577 \cdot R$
+
+---
+
+## Appendix: Mathematical Writing Conventions (Notation)
+
+Mathematicians and programmers use distinct symbols to indicate the geometric nature of a variable:
+
+| Value Type | Math Symbol | Example | Explanation |
+| :--- | :--- | :--- | :--- |
+| **Vector** | Arrow overhead OR Bold font | $\vec{v}$ or $\mathbf{v}$ | Indicates a full package of direction and size. |
+| **Magnitude** | Double/single vertical bars | $\|\vec{v}\|$ or $|\vec{v}|$ | Indicates the extracted scalar size/length of that vector. |
+| **Scalar** | Standard lowercase/italicized letter | $s$ or $T$ | Indicates a plain, single number (no bold, no arrow). |
+| **Distance** | Standard scalar letter | $d$ or $r$ | A specific scalar representing length or spatial offset. |
