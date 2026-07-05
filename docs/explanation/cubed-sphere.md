@@ -30,6 +30,12 @@ This document clarifies the concepts, mathematical variations, and terms associa
 *   **Face:** A 2D flat polygon that bounds a 3D object. In the context of a CubeSphere, it refers to one of the 6 major grid regions (Front, Back, Left, Right, Top, Bottom).
 *   **Side (or Edge):** A 1D line segment that connects two vertices on a shape. In a CubeSphere, it refers to the boundaries where adjacent faces meet. Gaps or mismatches along these sides must be prevented so the global terrain mesh remains continuous.
 
+### C. Stretch Intensity and Distortion Terms
+*   **Scale Factor / Stretch Factor ($s$):** The direct multiplier used to extend the length of a vector from its position on the cube face to the sphere surface.
+*   **Grid Distortion (or Grid Inflation):** The general term for how the uniform square grid cells on the flat cube face become warped and unevenly sized when projected onto the sphere.
+*   **Metric Tensor / Jacobian:** The mathematical tools used in differential geometry to measure the exact rate of "stretch intensity" (deformation of distance, area, and angles) at any given coordinate on the surface.
+*   **Area Deformation (or Area Scale):** The ratio of the area of a grid cell on the sphere to its original area on the cube, measuring how much a cell "inflates".
+
 ---
 
 ## 3. Circumference and Cube Inscription
@@ -47,7 +53,12 @@ To visualize how the flat cube becomes a round sphere, let's look at the mathema
 *   **Distance to Face Centers:** The distance from the center to the middle of any face is exactly $1.0\text{ unit}$.
 *   If this cube is placed inside a sphere of radius $\sqrt{3}$, only the corners touch the sphere.
 
-### C. How Projection "Stretches" the Cube
+### C. Purpose of Finding "Distance to Face Centers"
+Understanding the distance from the center to the face centers serves a key purpose in the projection math:
+*   **Measuring Topographical Variance:** It highlights that the cube's flat surface varies in distance from the center (from $1.0$ at the face center to $1.732$ at the corners).
+*   **Calculating the Stretch Factor:** To inflate the cube into a sphere, the projection formula must calculate how much to stretch each point. The face centers (at distance $1.0$) must be pushed outward by a larger ratio than the corners (at distance $1.732$) to achieve a uniform sphere radius.
+
+### D. How Projection "Stretches" the Cube
 To turn the flat cube into a perfect sphere, we must project all points on the cube surface outward:
 *   We draw a straight line (a vector) from the center of the sphere, through a point on the flat cube face, and extend it until it hits the sphere's surface.
 *   This normalizes the distance of every point to be exactly equal to the sphere's radius ($R$).
