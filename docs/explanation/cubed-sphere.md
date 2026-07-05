@@ -36,6 +36,12 @@ This document clarifies the concepts, mathematical variations, and terms associa
 *   **Metric Tensor / Jacobian:** The mathematical tools used in differential geometry to measure the exact rate of "stretch intensity" (deformation of distance, area, and angles) at any given coordinate on the surface.
 *   **Area Deformation (or Area Scale):** The ratio of the area of a grid cell on the sphere to its original area on the cube, measuring how much a cell "inflates".
 
+### D. Position Vector
+*   **Definition:** In computer graphics and coordinate geometry, vectors are used to represent static coordinate positions relative to an origin point.
+*   **Mechanics:** When representing a point $(x, y, z)$ as a position vector $\vec{p}$, we are describing a line that starts at the origin $(0,0,0)$ and points directly to $(x,y,z)$.
+    *   **Direction:** The straight line pointing from $(0,0,0)$ to $(x,y,z)$.
+    *   **Magnitude:** The physical distance from $(0,0,0)$ to $(x,y,z)$, calculated using the 3D distance formula.
+
 ---
 
 ## 3. Circumference and Cube Inscription
