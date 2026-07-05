@@ -165,3 +165,14 @@ Here is how the hierarchy levels are divided architecturally between **Models** 
 | **3. Sector Origin** | `Sector` | Model (Data Structure) | Geodetic Coordinates (Southwest Corner Datum) |
 | **4. Local Metric** | `DroneModel`, `BuildingModel` | Model (Individual Entities) | 2D Metric Offsets (meters $x, z$) |
 | **5. Grid-Cell** | `GridCell` | Model (Atomic Data Cell) | 2D Matrix Index (row, column) + Local Offset |
+
+#### H. Property Mapping and Data Types
+
+| Hierarchy Level | Owner Model/Class | Property Name | C# Data Type | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Global Geodetic** | *None (Calculated)* | `GeoCoordinate` | `struct GeoCoordinate` | Represents Latitude and Longitude angles. |
+| **2. Cubed-Sphere** | `LunarQuadtreeNode` | `Depth`<br>`BoundaryMin`<br>`BoundaryMax` | `int`<br>`GeoCoordinate`<br>`GeoCoordinate` | Subdivision level and angular boundaries. |
+| **3. Sector Origin** | `Sector` | `SectorId`<br>`Origin` | `string`<br>`GeoCoordinate` | Unique identifier and Southwest corner datum. |
+| **4. Local Metric** | `DroneModel`<br>`BuildingModel` | `SectorId`<br>`LocalX`<br>`LocalZ` | `string`<br>`float`<br>`float` | Parent sector ID and metrical coordinates (offsets in meters). |
+| **5. Grid-Cell** | `GridCell` | `Offset`<br>`Elevation` | `LocalOffset` | Metric offset coordinate and altitude value. |
+| **View (Rendering)** | `Transform` (Unity) | `position` | `Vector3` | Cartesian position vector in Unity World Space. |
