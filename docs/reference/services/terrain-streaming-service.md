@@ -51,7 +51,7 @@ sequenceDiagram
     participant Loop as Unity Update Loop
     participant TSS as TerrainStreamingService
     participant Node as LunarQuadtreeNode
-    participant Disk as Storage (Disk)
+    participant Disk as Storage Disk
 
     Loop->>TSS: "EvaluateLoadRequirements(camLookAt, camAltitude)"
     TSS->>Node: "Distance Check (Camera to Node Center)"
