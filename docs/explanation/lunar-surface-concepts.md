@@ -27,3 +27,43 @@ Because the Moon is not a perfect sphere, elevations are measured as offsets rel
 ### Interpreting Elevation Values
 *   **Positive Elevation ($> 0\text{ m}$):** Represents topography rising above the reference sphere (e.g., mountains, crater rims).
 *   **Negative Elevation ($< 0\text{ m}$):** Represents topography dropping below the reference sphere (e.g., deep basins, crater floors).
+
+---
+
+## 3. Global Partitioning and Sectoring Methodologies
+
+To divide a planetary sphere into discrete playable sectors or data grids, cartographers and simulation engineers use several primary partitioning systems:
+
+### A. Graticules
+*   **Definition:** The network of intersecting lines of latitude and longitude mapped onto a globe.
+*   **Role:** Serves as the primary coordinate grid for standard planetary navigation and alignment.
+
+### B. Bounding Using Four Coordinates (Quadrangles)
+*   **Definition:** Specifying a rectangular geographic area on a spherical grid using four values: Minimum Latitude ($Lat_{min}$), Maximum Latitude ($Lat_{max}$), Minimum Longitude ($Lon_{min}$), and Maximum Longitude ($Lon_{max}$).
+*   **Role:** Used by USGS and NASA to divide the Moon into standardized cartographic sheets.
+*   **Limitations:** Near the poles, the physical width of longitude steps approaches zero, leading to severe geometric distortion and shrinking sector sizes.
+
+### C. CubeSphere and Cube Mapping
+*   **Definition:** Projecting a spherical surface onto the six flat faces of an enclosing cube. Each flat face is then subdivided using a regular two-dimensional grid (often managed recursively via a Quadtree structure).
+*   **Role:** Eliminates the polar singularity (where coordinate lines converge at a single point) and ensures relatively uniform grid shapes for physics and terrain rendering.
+
+### D. Geodesic Grid
+*   **Definition:** A planetary grid constructed by projecting a regular polyhedron (usually an icosahedron with 20 faces) onto the surface of a sphere.
+*   **Role:** Subdivides the sphere into a network of triangles or hexagons that minimize spatial distortion.
+
+### E. Discrete Global Grid Systems (DGGS)
+*   **Definition:** A standardized spatial reference framework that uses a hierarchical tessellation of equal-area cells to cover the entire Earth or Moon.
+*   **Role:** Ensures that every cell at a given resolution level represents the exact same physical area on the ground, which is essential for accurate resource and environment calculations.
+
+---
+
+## 4. Key Differences: Latitude/Longitude Grid vs. CubeSphere
+
+While both systems represent points on a spherical Moon, they solve different mathematical and rendering challenges:
+
+| Feature | Latitude/Longitude Grid (Spherical) | CubeSphere (Cube-Projected) |
+| :--- | :--- | :--- |
+| **Grid Lines** | Formed by concentric rings (latitude) and pole-to-pole lines (longitude). | Formed by standard 2D Cartesian grids on 6 flat cube faces. |
+| **Polar Behavior** | Longitude lines converge at the North and South poles (singularities). | The poles are treated like ordinary surface points on the cube faces. |
+| **Cell Distortion** | High distortion; cells stretch into narrow triangles near the poles. | Low distortion; cells remain relatively square across the entire surface. |
+| **Primary Use** | Standardized human navigation and GIS coordinate references. | Game engine rendering, physics simulation, and real-time terrain level-of-detail (LOD) calculations. |
