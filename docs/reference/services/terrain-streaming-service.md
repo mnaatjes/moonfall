@@ -50,22 +50,22 @@ This sequence outlines the check and load execution flow during the game update 
 sequenceDiagram
     participant Loop as Unity Update Loop
     participant TSS as TerrainStreamingService
-    participant Node as LunarQuadtreeNode
+    participant QTNode as LunarQuadtreeNode
     participant Disk as Storage Disk
 
     Loop->>TSS: "EvaluateLoadRequirements(camLookAt, camAltitude)"
-    TSS->>Node: "Distance Check (Camera to Node Center)"
+    TSS->>QTNode: "Distance Check (Camera to Node Center)"
     opt When Node needs subdivision (Zoomed In)
-        TSS->>Node: "Subdivide into four children"
+        TSS->>QTNode: "Subdivide into four children"
     end
     opt When Node is Leaf and within range
         TSS->>TSS: "LoadSectorData(Node)"
         TSS->>Disk: "Async Read Heightmap and Resource Maps"
         Disk-->>TSS: "Return raw float arrays"
-        TSS->>Node: "Instantiate and link SectorData"
+        TSS->>QTNode: "Instantiate and link SectorData"
     end
     opt When Node is out of range
         TSS->>TSS: "UnloadSectorData(Node)"
-        TSS->>Node: "Clear SectorData reference (Garbage Collect)"
+        TSS->>QTNode: "Clear SectorData reference (Garbage Collect)"
     end
 ```
