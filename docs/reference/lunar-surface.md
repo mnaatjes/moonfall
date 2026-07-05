@@ -174,47 +174,47 @@ Here is how the hierarchy levels are divided architecturally between **Models** 
 
 ## 7. Sector-to-Sector Movement Transaction Flow
 
-This section details the runtime flow of information when a simulated entity moves across a Sector boundary.
+This section details the runtime flow of information when a simulated movable entity crosses a Sector boundary.
 
 ### A. Process Steps
-1.  **Movement Step:** The `DroneMovementService` calculates the drone's next position offset during the simulation tick.
+1.  **Movement Step:** The `EntityMovementService` calculates the entity's next position offset during the simulation tick.
 2.  **Boundary Check:** The service detects that the local metric coordinate has crossed outside the $1^{\circ} \times 1^{\circ}$ boundaries of Sector A (e.g., local $X > \text{Sector Width}$).
-3.  **Global Position Query:** The service calls the `CoordinateService` to translate the drone's local offset in Sector A into a global `GeoCoordinate` (Latitude, Longitude).
+3.  **Global Position Query:** The service calls the `CoordinateService` to translate the entity's local offset in Sector A into a global `GeoCoordinate` (Latitude, Longitude).
 4.  **Target Sector Lookup:** The service passes the global `GeoCoordinate` to the quadtree index to find which Sector now contains this coordinate, identifying **Sector B**.
 5.  **Coordinate Translation:** The service calls the `CoordinateService` to translate the global `GeoCoordinate` back into a local metric coordinate *relative* to Sector B's origin.
-6.  **Model State Update:** The service updates the properties on the `DroneModel` directly (setting `SectorId = "Sector_B"` and updating the local $(x, z)$ metric coordinates).
-7.  **Presenter Notification:** The `DronePresenter` observes this model update, calculates the new `Vector3` position in Unity World Space, and updates the `DroneView` transform.
+6.  **Model State Update:** The service updates the properties on the `EntityModel` directly (setting `SectorId = "Sector_B"` and updating the local $(x, z)$ metric coordinates).
+7.  **Presenter Notification:** The `EntityPresenter` observes this model update, calculates the new `Vector3` position in Unity World Space, and updates the `EntityView` transform.
 
 ### B. Sequence Diagram
 
 ```mermaid
 sequenceDiagram
-    participant DMS as DroneMovementService
+    participant EMS as EntityMovementService
     participant CS as CoordinateService
-    participant DM as DroneModel
-    participant DP as DronePresenter
-    participant DV as DroneView
+    participant EM as EntityModel
+    participant EP as EntityPresenter
+    participant EV as EntityView
 
-    Note over DMS, DM: 1. Simulation Tick Updates Position
-    DMS->>DMS: Calculate Next Step
-    DMS->>DMS: Detect Boundary Exit (e.g., X > Limit)
+    Note over EMS, EM: 1. Simulation Tick Updates Position
+    EMS->>EMS: Calculate Next Step
+    EMS->>EMS: Detect Boundary Exit (e.g., X > Limit)
 
-    Note over DMS, CS: 2. Convert to Global & Locate Target Sector
-    DMS->>CS: LocalToGeodetic(Sector_A, currentOffset)
-    CS-->>DMS: return GeoCoordinate
-    DMS->>DMS: Lookup sector at GeoCoordinate -> Sector_B
+    Note over EMS, CS: 2. Convert to Global & Locate Target Sector
+    EMS->>CS: LocalToGeodetic(Sector_A, currentOffset)
+    CS-->>EMS: return GeoCoordinate
+    EMS->>EMS: Lookup sector at GeoCoordinate -> Sector_B
 
-    Note over DMS, CS: 3. Translate Position to Target Sector Origin
-    DMS->>CS: GeodeticToLocal(Sector_B, GeoCoordinate)
-    CS-->>DMS: return newLocalOffset
+    Note over EMS, CS: 3. Translate Position to Target Sector Origin
+    EMS->>CS: GeodeticToLocal(Sector_B, GeoCoordinate)
+    CS-->>EMS: return newLocalOffset
 
-    Note over DMS, DM: 4. Update the Data Model
-    DMS->>DM: Set SectorId = "Sector_B"
-    DMS->>DM: Set LocalX, LocalZ = newLocalOffset
+    Note over EMS, EM: 4. Update the Data Model
+    EMS->>EM: Set SectorId = "Sector_B"
+    EMS->>EM: Set LocalX, LocalZ = newLocalOffset
 
-    Note over DM, DV: 5. Presenter Updates View in Unity
-    DM-->>DP: Notify State Changed
-    DP->>CS: Get UnityWorldPosition(Sector_B, newLocalOffset)
-    CS-->>DP: return Vector3
-    DP->>DV: Update Transform position (Vector3)
+    Note over EM, EV: 5. Presenter Updates View in Unity
+    EM-->>EP: Notify State Changed
+    EP->>CS: Get UnityWorldPosition(Sector_B, newLocalOffset)
+    CS-->>EP: return Vector3
+    EP->>EV: Update Transform position (Vector3)
 ```
