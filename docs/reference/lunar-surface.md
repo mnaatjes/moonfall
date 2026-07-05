@@ -23,10 +23,10 @@ To keep physical calculations realistic and ensure compatibility with planetary 
 
 These defined terms map geographical GIS dataset boundaries to localized Unity game world coordinate spaces:
 
-*   **Geodetic Coordinate (`GeoCoordinate`):** A location defined by `Latitude` (decimal degrees, $-90.0$ to $90.0$) and `Longitude` (decimal degrees, $0.0$ to $360.0$).
+*   **Global Geodetic Coordinate (`GeoCoordinate`):** A location defined by `Latitude` (decimal degrees, $-90.0$ to $90.0$) and `Longitude` (decimal degrees, $0.0$ to $360.0$).
 *   **Altitude / Elevation (`Elevation`):** The height offset in meters ($m$) relative to the base lunar radius sphere ($1737.4\text{ km}$).
 *   **Sector (`Sector`):** A bounded geographical coordinate block (e.g., $1^{\circ} \times 1^{\circ}$ square) representing a building and exploration zone.
-*   **Local Coordinates (`LocalOffset`):** Metrical offsets $(x, z)$ measured in meters from a sector's customized origin point, used to place structures inside Unity scenes.
+*   **Local Metric Coordinate (`LocalOffset`):** Metrical offsets $(x, z)$ measured in meters from a sector's customized origin point (the southwest corner), used to place structures inside Unity scenes.
 *   **Tile / Cell (`GridCell`):** The atomic resolution unit of the terrain database, representing a single pixel on heightmap or resource textures.
 
 ---
@@ -72,13 +72,19 @@ The Moon is mathematically modeled as a cube with 6 faces, where each face is th
 
 ---
 
-## 5. On-Demand Streaming Service
+## 5. Simulation Services
 
-The loading and unloading of high-fidelity data is managed by a dedicated C# business service.
+The loading, unloading, and coordination of high-fidelity spatial data is managed by dedicated C# services.
 
-### The Service: [TerrainStreamingService](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/TerrainStreamingService.cs)
+### A. The Streaming Service: [TerrainStreamingService](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/TerrainStreamingService.cs)
 *   **Role:** Reads camera coordinates and dynamically manages node allocations in the Quadtree.
 *   **Methods:**
     *   `EvaluateLoadRequirements(GeoCoordinate cameraLookAt, float cameraAltitude)`: Recursively walks the quadtree. Determines which nodes require subdivision or merging based on distance.
     *   `LoadSectorData(LunarQuadtreeNode leafNode)`: Asynchronously reads heightmap (LOLA DEM) and resource segments from storage and instantiates the `Sector` data.
     *   `UnloadSectorData(LunarQuadtreeNode leafNode)`: Discards the `GridCell` array from memory to free up RAM when the camera moves away.
+
+### B. The Coordinate Service: `CoordinateService`
+*   **Role:** Translates coordinates between local meters (`LocalOffset`) and global angles (`GeoCoordinate`).
+*   **Methods:**
+    *   `LocalToGeodetic(Sector sector, LocalOffset localPos)`: Returns the global `GeoCoordinate` for a position inside a sector.
+    *   `GeodeticToLocal(Sector sector, GeoCoordinate geoPos)`: Returns the `LocalOffset` inside a sector for a global coordinate.
