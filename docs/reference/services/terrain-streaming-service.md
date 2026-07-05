@@ -48,10 +48,10 @@ This sequence outlines the check and load execution flow during the game update 
 
 ```mermaid
 sequenceDiagram
-    participant Loop as Unity Loop
-    participant TSS as Terrain Service
-    participant Node as Quadtree Node
-    participant Disk as Storage Disk
+    participant Loop as UnityLoop
+    participant TSS as TerrainService
+    participant Node as QuadtreeNode
+    participant Disk as StorageDisk
 
     Loop->>TSS: EvaluateLoadRequirements
     TSS->>Node: DistanceCheck
