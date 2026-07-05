@@ -42,3 +42,21 @@ The **Camera** acts as the translator between coordinate spaces:
 
 *   **Projection:** The camera reads the 3D coordinates of objects in **World Space** and projects them onto the flat 2D plane of **Screen Space** based on its position, rotation, and field of view.
 *   **Viewport Space:** A normalized coordinate system where $(0,0)$ is the bottom-left of the camera's view, and $(1,1)$ is the top-right (independent of pixel resolution). The camera uses this normalized space to map world coordinates to screen pixels.
+
+---
+
+## 4. Understanding Unity "Scenes"
+
+To clarify how the virtual volume relates to what is rendered on screen, it is necessary to define the concept of a **Scene**:
+
+### A. What is a "Scene"?
+*   **Definition:** A Scene is a virtual environment container (like a level, map, or workspace file).
+*   **Contents:** It contains all the 3D meshes (the Moon globe), cameras, lighting, and script engines that make up that part of the game.
+
+### B. Is it what is drawn on the screen?
+*   **No:** The screen only shows what the Camera is currently looking at.
+*   **Example:** If the Moon sphere is in the Scene, but the camera is rotated away facing empty space, the screen will show black space. However, the Moon still exists in the active Scene.
+
+### C. Is the Scene equivalent to Unity's Global Virtual Space?
+*   **Yes:** While a scene is active, it defines the active Global Virtual Space. The origin $(0,0,0)$ is the center of this active scene container.
+*   **Note:** You can think of a Scene as a virtual room. The World Origin is the exact center of that room, and the Camera is a person walking around the room holding a video camera. What is shown on the screen is only what the camera person points at, not the entire room.
