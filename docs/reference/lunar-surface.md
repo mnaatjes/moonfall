@@ -88,3 +88,133 @@ The loading, unloading, and coordination of high-fidelity spatial data is manage
 *   **Methods:**
     *   `LocalToGeodetic(Sector sector, LocalOffset localPos)`: Returns the global `GeoCoordinate` for a position inside a sector.
     *   `GeodeticToLocal(Sector sector, GeoCoordinate geoPos)`: Returns the `LocalOffset` inside a sector for a global coordinate.
+
+---
+
+## 6. Game-World Coordinate Hierarchy
+
+### A. Local Metric Coordinate (`LocalOffset`)
+*   **Scale:** Micro Scale (Inside a single playable Sector).
+*   **Definition:** A flat, 2D coordinate $(x,z)$ measured in meters from a Sector's designated origin point (the southwest corner, which represents $(0,0)$).
+*   **Example:** Placing a Solar Panel at local position $(x = 45.0\text{ m}, z = 120.5\text{ m})$ relative to the bottom-left corner of Sector `SEC-402`.
+
+### B. Global Geodetic Coordinate (`GeoCoordinate`)
+*   **Scale:** Macro Scale (The entire lunar globe).
+*   **Definition:** An angular coordinate pair (Latitude, Longitude) in degrees representing a physical point on the spherical Moon.
+*   **Example:** The Shackleton Crater (a key resource site at the South Pole) is located at:
+    *   `Latitude = -89.9°`
+    *   `Longitude = 0.0°`
+
+### C. Unity Engine Coordinate (`Vector3` / World Position)
+*   **Scale:** View Scale (Rendering and physics engine).
+*   **Definition:** A 3D Cartesian vector $(X, Y, Z)$ in Unity world space, representing the virtual position of a rendered GameObject inside the virtual environment volume.
+*   **Architectural Scope (MVP Boundary):** These coordinates are strictly utilized in the **View** and **Presenter** layers of the Model-View-Presenter (MVP) architecture. The simulation **Model** remains completely decoupled from Unity, containing no `UnityEngine` references or `Vector3` coordinate types.
+
+### D. The Cubed-Sphere: The Indexing & Projection Layer
+*   **Location in Hierarchy:** Between the Global Geodetic Coordinate (Macro) and the Sector (Medium).
+*   **Role:** It functions as the mathematical bridge that maps the spherical globe to flat data structures.
+*   **How it is used:** Instead of calculating positions on a curved sphere, the database uses the 6 faces of the Cubed-Sphere to organize the Quadtree loading system. It decides which physical regions to load into the active space.
+
+### E. The Grid-Cell: The Atomic Resolution Layer
+*   **Location in Hierarchy:** Below the Local Metric Coordinate (Micro).
+*   **Role:** It is the smallest unit of physical data (the "pixels" of the simulation).
+*   **How it is used:** A `GridCell` sits inside a Sector's coordinate system. It does not define its own location; rather, it is indexed at a specific row and column of a 2D matrix inside the Sector. It holds local attributes like elevation and resource density for that specific metric spot.
+
+### F. Hierarchy Visual Diagram (Top-to-Bottom)
+1.  **Global Geodetic Coordinate (Lat/Lon):** The physical Moon sphere.
+2.  **Cubed-Sphere Projection (Cube Face + Quadtree):** The database divider (tells the game what to load).
+3.  **Sector Origin Coordinate (Lat/Lon corner anchor):** The local game-board boundary.
+4.  **Local Metric Coordinate (Meters offset from corner):** Where objects and buildings sit.
+5.  **Grid-Cell (Row/Col index):** The resource and elevation data at that spot.
+
+### G. Architectural Allocation of the Hierarchy
+
+Here is how the hierarchy levels are divided architecturally between **Models** and **Services**:
+
+#### 1. Stored in Individual Entity Models (e.g., Buildings, Drones)
+*   **Level 4: Local Metric Coordinate (Meters offset):**
+    *   *Why:* Each building, drone, or mining outpost model must store its local metric coordinates ($(x,z)$ offsets) so the game knows exactly where it is placed on the playable board and can compute local collisions.
+
+#### 2. Necessary for the Model of the Lunar Surface/Globe
+*   **Level 3: Sector Origin Coordinate (Lat/Lon anchor):**
+    *   *Why:* The [Sector](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/Sector.cs) data model stores its own Southwest origin point to anchor itself to a specific physical location on the spherical Moon.
+*   **Level 5: Grid-Cell (Row/Col index):**
+    *   *Why:* The [Sector](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/Sector.cs) model stores the 2D grid matrix of [GridCell](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/GridCell.cs) objects containing the raw terrain elevation, albedo, and resource densities.
+
+#### 3. Calculated by a Service Class
+*   **Level 1: Global Geodetic Coordinate (Lat/Lon):**
+    *   *Calculated by:* A coordinate conversion utility service.
+    *   *Why:* Calculated dynamically. An entity's global geodetic coordinate is derived by taking its Level 4 local offset and combining it with the Sector's Level 3 origin.
+*   **Level 2: Cubed-Sphere Projection (Cube Face + Quadtree):**
+    *   *Calculated by:* [TerrainStreamingService](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/TerrainStreamingService.cs).
+    *   *Why:* The complex math that maps spherical coordinates to the 6 faces of the cubed-sphere, evaluates camera distances, and triggers the loading/unloading of quadtree sectors is handled entirely by this runtime business service.
+
+#### Architectural Allocation Reference Table
+
+| Hierarchy Level | Primary Code Owner | Architectural Layer | Primary Unit / Coordinate System |
+| :--- | :--- | :--- | :--- |
+| **1. Global Geodetic** | `CoordinateService` | Service (Business Logic) | Geodetic Angular Degrees (Latitude, Longitude) |
+| **2. Cubed-Sphere** | `TerrainStreamingService` | Service (Data Streaming) | Cube Face ID + Normalized 2D Quadtree Nodes |
+| **3. Sector Origin** | `Sector` | Model (Data Structure) | Geodetic Coordinates (Southwest Corner Datum) |
+| **4. Local Metric** | `DroneModel`, `BuildingModel` | Model (Individual Entities) | 2D Metric Offsets (meters $x, z$) |
+| **5. Grid-Cell** | `GridCell` | Model (Atomic Data Cell) | 2D Matrix Index (row, column) + Local Offset |
+
+#### H. Property Mapping and Data Types
+
+| Hierarchy Level | Owner Model/Class | Property Name | C# Data Type | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Global Geodetic** | *None (Calculated)* | `GeoCoordinate` | `struct GeoCoordinate` | Represents Latitude and Longitude angles. |
+| **2. Cubed-Sphere** | `LunarQuadtreeNode` | `Depth`<br>`BoundaryMin`<br>`BoundaryMax` | `int`<br>`GeoCoordinate`<br>`GeoCoordinate` | Subdivision level and angular boundaries. |
+| **3. Sector Origin** | `Sector` | `SectorId`<br>`Origin` | `string`<br>`GeoCoordinate` | Unique identifier and Southwest corner datum. |
+| **4. Local Metric** | `DroneModel`<br>`BuildingModel` | `SectorId`<br>`LocalX`<br>`LocalZ` | `string`<br>`float`<br>`float` | Parent sector ID and metrical coordinates (offsets in meters). |
+| **5. Grid-Cell** | `GridCell` | `Offset`<br>`Elevation` | `LocalOffset` | Metric offset coordinate and altitude value. |
+| **View (Rendering)** | `Transform` (Unity) | `position` | `Vector3` | Cartesian position vector in Unity World Space. |
+
+---
+
+## 7. Sector-to-Sector Movement Transaction Flow
+
+This section details the runtime flow of information when a simulated entity moves across a Sector boundary.
+
+### A. Process Steps
+1.  **Movement Step:** The `DroneMovementService` calculates the drone's next position offset during the simulation tick.
+2.  **Boundary Check:** The service detects that the local metric coordinate has crossed outside the $1^{\circ} \times 1^{\circ}$ boundaries of Sector A (e.g., local $X > \text{Sector Width}$).
+3.  **Global Position Query:** The service calls the `CoordinateService` to translate the drone's local offset in Sector A into a global `GeoCoordinate` (Latitude, Longitude).
+4.  **Target Sector Lookup:** The service passes the global `GeoCoordinate` to the quadtree index to find which Sector now contains this coordinate, identifying **Sector B**.
+5.  **Coordinate Translation:** The service calls the `CoordinateService` to translate the global `GeoCoordinate` back into a local metric coordinate *relative* to Sector B's origin.
+6.  **Model State Update:** The service updates the properties on the `DroneModel` directly (setting `SectorId = "Sector_B"` and updating the local $(x, z)$ metric coordinates).
+7.  **Presenter Notification:** The `DronePresenter` observes this model update, calculates the new `Vector3` position in Unity World Space, and updates the `DroneView` transform.
+
+### B. Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant DMS as DroneMovementService
+    participant CS as CoordinateService
+    participant DM as DroneModel
+    participant DP as DronePresenter
+    participant DV as DroneView
+
+    Note over DMS, DM: 1. Simulation Tick Updates Position
+    DMS->>DMS: Calculate Next Step
+    DMS->>DMS: Detect Boundary Exit (e.g., X > Limit)
+
+    Note over DMS, CS: 2. Convert to Global & Locate Target Sector
+    DMS->>CS: LocalToGeodetic(Sector_A, currentOffset)
+    CS-->>DMS: return GeoCoordinate
+    DMS->>DMS: Lookup sector at GeoCoordinate -> Sector_B
+
+    Note over DMS, CS: 3. Translate Position to Target Sector Origin
+    DMS->>CS: GeodeticToLocal(Sector_B, GeoCoordinate)
+    CS-->>DMS: return newLocalOffset
+
+    Note over DMS, DM: 4. Update the Data Model
+    DMS->>DM: Set SectorId = "Sector_B"
+    DMS->>DM: Set LocalX, LocalZ = newLocalOffset
+
+    Note over DM, DV: 5. Presenter Updates View in Unity
+    DM-->>DP: Notify State Changed
+    DP->>CS: Get UnityWorldPosition(Sector_B, newLocalOffset)
+    CS-->>DP: return Vector3
+    DP->>DV: Update Transform position (Vector3)
+```
