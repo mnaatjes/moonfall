@@ -110,3 +110,9 @@ If the game-world is modeled as a sphere, the CubeSphere is utilized for the fol
 *   **Example:** The Shackleton Crater (a key resource site at the South Pole) is located at:
     *   `Latitude = -89.9°`
     *   `Longitude = 0.0°`
+
+### C. Unity Engine Coordinate (`Vector3` / World Position)
+*   **Scale:** View Scale (Rendering and physics engine).
+*   **Definition:** A 3D Cartesian vector $(X, Y, Z)$ in Unity world space, representing the virtual position of a rendered GameObject inside the virtual environment volume.
+*   **Architectural Scope (MVP Boundary):** These coordinates are strictly utilized in the **View** and **Presenter** layers of the Model-View-Presenter (MVP) architecture. The simulation **Model** remains completely decoupled from Unity, containing no `UnityEngine` references or `Vector3` coordinate types.
+*   **For Details:** See the dedicated guide on [unity-coordinate-spaces.md](file:///home/hp_prodesk/src/moonfall/docs/explanation/unity-coordinate-spaces.md).
