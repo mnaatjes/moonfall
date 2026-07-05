@@ -29,3 +29,26 @@ This document clarifies the concepts, mathematical variations, and terms associa
 ### B. Side vs. Face
 *   **Face:** A 2D flat polygon that bounds a 3D object. In the context of a CubeSphere, it refers to one of the 6 major grid regions (Front, Back, Left, Right, Top, Bottom).
 *   **Side (or Edge):** A 1D line segment that connects two vertices on a shape. In a CubeSphere, it refers to the boundaries where adjacent faces meet. Gaps or mismatches along these sides must be prevented so the global terrain mesh remains continuous.
+
+---
+
+## 3. Circumference and Cube Inscription
+
+To visualize how the flat cube becomes a round sphere, let's look at the mathematical mechanics of placing a cube inside a sphere:
+
+### A. The Starting State (The Inscribed Cube)
+*   Imagine a 3D cube placed inside a sphere.
+*   The 8 corners of the cube are touching the sphere's inner wall.
+*   The centers of the 6 flat faces do not touch the sphere; they sit closer to the center of the sphere.
+
+### B. The Math of Inscription (Unit Example)
+*   Suppose we have a cube with corners at coordinates $(\pm 1, \pm 1, \pm 1)$.
+*   **Distance to Corners:** The distance from the center $(0,0,0)$ to any corner is $\sqrt{1^2 + 1^2 + 1^2} = \sqrt{3} \approx 1.732\text{ units}$.
+*   **Distance to Face Centers:** The distance from the center to the middle of any face is exactly $1.0\text{ unit}$.
+*   If this cube is placed inside a sphere of radius $\sqrt{3}$, only the corners touch the sphere.
+
+### C. How Projection "Stretches" the Cube
+To turn the flat cube into a perfect sphere, we must project all points on the cube surface outward:
+*   We draw a straight line (a vector) from the center of the sphere, through a point on the flat cube face, and extend it until it hits the sphere's surface.
+*   This normalizes the distance of every point to be exactly equal to the sphere's radius ($R$).
+*   The centers of the faces (originally at distance $1.0$) are pushed outward by the greatest amount, while the corners (already at the sphere's boundary) are not pushed outward at all. This "inflates" the flat faces into curved surfaces.
