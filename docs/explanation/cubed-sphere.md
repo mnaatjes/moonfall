@@ -79,9 +79,9 @@ Understanding the distance from the center to the face centers serves a key purp
 
 ### D. How Projection "Stretches" the Cube
 To turn the flat cube into a perfect sphere, we must project all points on the cube surface outward:
-*   We draw a straight line (a vector) from the center of the sphere, through a point on the flat cube face, and extend it until it hits the sphere's surface.
-*   This normalizes the distance of every point to be exactly equal to the sphere's radius ($R$).
-*   The centers of the faces (originally at distance $1.0$) are pushed outward by the greatest amount, while the corners (already at the sphere's boundary) are not pushed outward at all. This "inflates" the flat faces into curved surfaces.
+*   **Vector Scaling:** We draw a straight line (a vector) from the center of the sphere, through a point on the flat cube face, and extend it until it hits the sphere's surface.
+*   **Distance Normalization:** This normalizes the distance of every point to be exactly equal to the sphere's radius ($R$).
+*   **Uneven Expansion:** The centers of the faces (originally at distance $1.0$) are pushed outward by the greatest amount, while the corners (already at the sphere's boundary) are not pushed outward at all. This "inflates" the flat faces into curved surfaces.
 
 ---
 
@@ -124,3 +124,15 @@ Mathematicians and programmers use distinct symbols to indicate the geometric na
 | **Magnitude** | Double/single vertical bars | $\|\vec{v}\|$ or $|\vec{v}|$ | Indicates the extracted scalar size/length of that vector. |
 | **Scalar** | Standard lowercase/italicized letter | $s$ or $T$ | Indicates a plain, single number (no bold, no arrow). |
 | **Distance** | Standard scalar letter | $d$ or $r$ | A specific scalar representing length or spatial offset. |
+
+### Scalar and Velocity Vector Example
+
+To clarify the difference between vectors, magnitudes, and scalars outside of spatial distances, consider a storm:
+
+*   **The Scalar:** The raw number `50` (or the speed `50 mph`).
+*   **The Definition:** A scalar is simply a single number that represents a size or quantity, with no direction attached.
+*   **The Relationship:**
+    *   **Velocity Vector:** The full coordinate package: `("Northeast", 50)`.
+    *   **Magnitude:** The size of that velocity vector (its speed).
+    *   **Scalar:** The mathematical value of that magnitude (`50`).
+*   **Other Scalars in the Storm:** The air temperature (`72`), the storm's pressure (`980`), and the duration of the storm (`3` hours) are also scalars. They are all single numbers with no directional vectors.
