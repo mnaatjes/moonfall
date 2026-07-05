@@ -48,6 +48,24 @@ This document serves as the main registration and tracking archive for our core 
 *   **Methods:**
     *   `RequestPayload(LaunchVehicleModel rocket, SpacecraftModel payload)`: Validates budget requirements and adds spacecraft to transit.
 
+### F. [DroneSwarmModel](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/DroneSwarmModel.cs)
+*   **Role:** Represents a composite swarm of 4 propulsive hopping drones designed to scan and claim sectors.
+*   **Properties:**
+    *   `DronePositions` (Vector2[]): Surface coordinates of the 4 independent sub-units.
+    *   `TargetedSector` (SectorModel): The specific map sector assigned for landing and deployment.
+*   **Methods:**
+    *   `DeployToSector(SectorModel sector)`: Triggers descent coordinates calculations.
+
+### G. [SectorModel](file:///home/hp_prodesk/src/moonfall/Assets/Scripts/Simulation/SectorModel.cs)
+*   **Role:** Represents a defined territory boundary segment on the lunar surface.
+*   **Properties:**
+    *   `BoundaryMin` (Vector2): South-West corner coordinate boundary.
+    *   `BoundaryMax` (Vector2): North-East corner coordinate boundary.
+    *   `IsClaimed` (bool): Status indicating if construction is unlocked.
+    *   `ScanFidelity` (float): Mapping completion rating for this sector (0.0 to 1.0).
+*   **Methods:**
+    *   `ClaimSector()`: Finalizes the claim state and unlocks localized construction utilities.
+
 ---
 
 ## 2. Core Model Association Diagram
@@ -89,8 +107,25 @@ classDiagram
         +RequestPayload(LaunchVehicleModel rocket, SpacecraftModel payload)
     }
 
+    class DroneSwarmModel {
+        +Vector2[] DronePositions
+        +SectorModel TargetedSector
+        +DeployToSector(SectorModel sector)
+    }
+
+    class SectorModel {
+        +Vector2 BoundaryMin
+        +Vector2 BoundaryMax
+        +bool IsClaimed
+        +float ScanFidelity
+        +ClaimSector()
+    }
+
     MissionManagerModel --> LaunchVehicleModel : Uses to Calculate Cost
     MissionManagerModel --> SpacecraftModel : Spawns & Tracks
     SpacecraftModel *-- InstrumentModel : Aggregates
     SpacecraftModel --> ResourceGridModel : Updates Fidelity via Scans
+    SpacecraftModel <|-- DroneSwarmModel : Inherits
+    DroneSwarmModel --> SectorModel : Descends & Land in Corners
+    SectorModel --> ResourceGridModel : Updates Local Resolution
 ```
